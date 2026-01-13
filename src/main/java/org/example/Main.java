@@ -1,17 +1,35 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import org.example.controller.Controller;
+import org.example.model.Ereignis;
+import org.example.model.SponsorGeschenk;
+import org.example.model.Tribut;
+import org.example.repository.EreignisRepository;
+import org.example.repository.SponsorGeschenkRepository;
+import org.example.repository.TributRepository;
+import org.example.service.Service;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+
+            TributRepository tributRepo = new TributRepository();
+            EreignisRepository ereignisRepo = new EreignisRepository();
+            SponsorGeschenkRepository geschenkRepo = new SponsorGeschenkRepository();
+
+            tributRepo.loadFromJson("tributes.json", Tribut[].class);
+            ereignisRepo.loadFromJson("events.json", Ereignis[].class);
+            geschenkRepo.loadFromJson("gifts.json", SponsorGeschenk[].class);
+
+            Service service = new Service(ereignisRepo, geschenkRepo, tributRepo);
+            Controller controller = new Controller(service);
+
+            controller.executeExercise1();
+
+        } catch (IOException e) {
+            System.err.println("Eroare la citirea fișierelor JSON: " + e.getMessage());
         }
     }
 }
