@@ -9,27 +9,28 @@ import org.example.repository.SponsorGeschenkRepository;
 import org.example.repository.TributRepository;
 import org.example.service.Service;
 
-import java.io.IOException;
-
 public class Main {
     public static void main(String[] args) {
         try {
-
+            // Inițializare repo-uri
             TributRepository tributRepo = new TributRepository();
             EreignisRepository ereignisRepo = new EreignisRepository();
             SponsorGeschenkRepository geschenkRepo = new SponsorGeschenkRepository();
 
+            // Încărcare date [cite: 39]
             tributRepo.loadFromJson("tributes.json", Tribut[].class);
             ereignisRepo.loadFromJson("events.json", Ereignis[].class);
             geschenkRepo.loadFromJson("gifts.json", SponsorGeschenk[].class);
 
+            // Dependency Injection
             Service service = new Service(ereignisRepo, geschenkRepo, tributRepo);
             Controller controller = new Controller(service);
 
-            controller.executeExercise1();
+            // Pornire aplicație
+            controller.run();
 
-        } catch (IOException e) {
-            System.err.println("Eroare la citirea fișierelor JSON: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
